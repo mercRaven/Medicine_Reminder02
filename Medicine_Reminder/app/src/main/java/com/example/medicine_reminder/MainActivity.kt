@@ -10,13 +10,13 @@ import android.content.BroadcastReceiver
 import android.content.Context
 import android.content.Intent
 import android.view.View
+import android.util.Log
 import android.widget.Button
 import android.widget.EditText
 import android.widget.SeekBar
 import android.widget.TextView
 import android.widget.Toast
 import java.util.*
-
 
 class MainActivity : AppCompatActivity() {
     private lateinit var setReminderButton: Button
@@ -27,50 +27,55 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-        val spinner: Spinner = findViewById(R.id.daysSpinner)
-        ArrayAdapter.createFromResource(
-            this,
-            R.array.days_of_week,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinner.adapter = adapter
-        }
-        val spinner1: Spinner = findViewById(R.id.timeLabelSpin)
-        ArrayAdapter.createFromResource(
-            this,
-            R.array.days_label,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinner1.adapter = adapter
-        }
-        val spinner2: Spinner = findViewById(R.id.alarmSoundSpinner)
-        ArrayAdapter.createFromResource(
-            this,
-            R.array.alarm_sounds,
-            android.R.layout.simple_spinner_item
-        ).also { adapter ->
-            adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
-            spinner2.adapter = adapter
-        }
-        super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
 
-        setReminderButton = findViewById(R.id.setReminderButton)
-        cancelReminderButton = findViewById(R.id.cancelReminderButton)
-        alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
+        Log.d("MainActivity", "onCreate")
+        try {
+            val spinner: Spinner = findViewById(R.id.daysSpinner)
+            ArrayAdapter.createFromResource(
+                this,
+                R.array.days_of_week,
+                android.R.layout.simple_spinner_item
+            ).also { adapter ->
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinner.adapter = adapter
+            }
+            val spinner1: Spinner = findViewById(R.id.timeLabelSpin)
+            ArrayAdapter.createFromResource(
+                this,
+                R.array.days_label,
+                android.R.layout.simple_spinner_item
+            ).also { adapter ->
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinner1.adapter = adapter
+            }
+            val spinner2: Spinner = findViewById(R.id.alarmSoundSpinner)
+            ArrayAdapter.createFromResource(
+                this,
+                R.array.alarm_sounds,
+                android.R.layout.simple_spinner_item
+            ).also { adapter ->
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinner2.adapter = adapter
 
-        setReminderButton.setOnClickListener {
-            setAlarm()
-        }
+                setReminderButton = findViewById(R.id.setReminderButton)
+                cancelReminderButton = findViewById(R.id.cancelReminderButton)
+                alarmManager = getSystemService(Context.ALARM_SERVICE) as AlarmManager
 
-        cancelReminderButton.setOnClickListener {
-            cancelAlarm()
+                setReminderButton.setOnClickListener {
+                    setAlarm()
+                }
+
+                cancelReminderButton.setOnClickListener {
+                    cancelAlarm()
+                }
+            }
+        } catch(e:Exception){
+            Log.e("MainActivity","Error during initialization",e)
         }
     }
 
     private fun setAlarm() {
+        Log.d("MainActivity","setAlarm")
         // Get selected time from the SeekBar and Spinner
         val timeSeekBar = findViewById<SeekBar>(R.id.timeSeekBar)
         val selectedTime = timeSeekBar.progress
@@ -95,6 +100,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun cancelAlarm() {
+        Log.d("MainActivity","CancelAlarm")
         alarmManager.cancel(alarmIntent)
         // Reset the screen to its original state
         resetScreen()
@@ -130,4 +136,3 @@ class AlarmReceiver : BroadcastReceiver() {
         Toast.makeText(context, message, Toast.LENGTH_SHORT).show()
     }
 }
-
